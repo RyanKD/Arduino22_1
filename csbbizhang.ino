@@ -11,8 +11,6 @@ int leftMotor2 = 9;
 int rightMotor1 = 10;
 int rightMotor2 = 11;
 
-//int leftPWM = 5;
-//int rightPWM = 6;
 
 Servo myServo;  //舵机
 
@@ -40,9 +38,9 @@ void setup() {
 void loop() {
   avoidance();
   /*int i;
-  // put your main code here, to run repeatedly:
-  if (Serial.available())
-  { i = Serial.read();
+    // put your main code here, to run repeatedly:
+    if (Serial.available())
+    { i = Serial.read();
     switch (i)
     { case'7': {
           avoidance();
@@ -60,7 +58,7 @@ void loop() {
         //case'5':{back();break;}
 
     }
-  }*/
+    }*/
 
 }
 void motorRun(int cmd, int value)
@@ -112,35 +110,29 @@ void avoidance()
   myServo.write(90);
   dis[1] = getDistance(); //中间
 
-  if (dis[1] < 40)
+  if (dis[1] < 30)
   {
     motorRun(STOP, 0);
-    for (pos = 90; pos <= 170; pos += 1)
-    {
-      myServo.write(pos);              // tell servo to go to position in variable 'pos'
-      delay(15);                       // waits 15ms for the servo to reach the position
-    }
+    myServo.write(90);
+    dis[1] = getDistance(); //中间
+    delay(800);
+    myServo.write(170);
+    delay(500);
     dis[2] = getDistance(); //左边
-    for (pos = 170; pos >= 10; pos -= 1)
-    {
-      myServo.write(pos);              // tell servo to go to position in variable 'pos'
-      delay(15);                       // waits 15ms for the servo to reach the position
-      if (pos == 90)
-        dis[1] = getDistance(); //中间
-    }
+    delay(100);
+    myServo.write(10);
+    delay(600);
     dis[0] = getDistance(); //右边
-    for (pos = 10; pos <= 90; pos += 1)
-    {
-      myServo.write(pos);              // tell servo to go to position in variable 'pos'
-      delay(15);                       // waits 15ms for the servo to reach the position
-    }
-    if ((dis[0] < dis[2]) && (dis[0] > 40) && (dis[2] > 40)) //右边距离障碍的距离比左边近
+    delay(100);
+    myServo.write(90);
+    delay(500);
+    if ((dis[0] < dis[2]) && (dis[2] > 30)) //右边距离障碍的距离比左边近
     {
       //左转
       motorRun(TURNLEFT, 250);
       delay(500);
     }
-    else if ((dis[0] > dis[2]) && (dis[0] > 40) && (dis[2] > 40)) //右边距离障碍的距离比左边远
+    else if ((dis[0] > dis[2]) && (dis[0] > 30)) //右边距离障碍的距离比左边远
     {
       //右转
       motorRun(TURNRIGHT, 250);
@@ -165,7 +157,6 @@ int getDistance()
   int distance = pulseIn(inputPin, HIGH); // 读出脉冲时间
   distance = distance / 58; // 将脉冲时间转化为距离（单位：厘米）
   Serial.println(distance); //输出距离值
-
   if (distance >= 50)
   {
     //如果距离小于50厘米返回数据
